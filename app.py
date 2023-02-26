@@ -6,6 +6,7 @@ page_bg_img='''
 <style>
 body{
 background-image: url(‘frs.jpg’);
+baground-size:cover;
 }
 </style>
 '''
