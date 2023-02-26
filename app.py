@@ -2,16 +2,22 @@ import streamlit as st
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
-page_bg_img='''
-<style>
-body{
-background-image: url('https://www.google.com/imgres?imgurl=https%3A%2F%2Fwww.gloriafood.com%2Fwp-content%2Fuploads%2F2019%2F02%2Fforecasting-restaurant-sales.png&imgrefurl=https%3A%2F%2Fwww.gloriafood.com%2Fforecasting-restaurant-sales&tbnid=Yd8vdnsJDNQ4dM&vet=12ahUKEwjAusqy77L9AhWs7zgGHRIGBVkQMygXegQIARBr..i&docid=MKw4TZG-FciNlM&w=870&h=380&q=canteen%20sales%20prediction%20website%20images&ved=2ahUKEwjAusqy77L9AhWs7zgGHRIGBVkQMygXegQIARBr’);
-baground-size:cover;
-}
-</style>
-'''
-st.markdown( page_bg_img,unsafe_allow_html=True)
-
+import base64
+def add_bg_from_local(image_file):
+    with open(image_file, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read())
+    st.markdown(
+    f"""
+    <style>
+    .stApp {{
+        background-image: url(data:image/{"jpg"};base64,{encoded_string.decode()});
+        background-size: cover
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True
+    )
+add_bg_from_local('blue_bg.png')  
 
 # Load the sales data
 sales_df = pd.read_csv('sales_data.csv')
