@@ -43,11 +43,11 @@ print('Mean squared error: ', mse)
 print('R^2 score:', r2)
 
 # Get input from user
-item_name =st.selectbox(fontcolor='#ffff'
-    'select item name',
+item_name =st.selectbox(
+    red[select item name],
     ('vada', 'samoosa', 'cream bun','pazhampori','bajji'))
 day = st.selectbox(
-    'select item name',
+    'select day',
     ('Monday', 'Tuesday', 'Wednesday','Thursday','Friday'))
 
 # Create new input
