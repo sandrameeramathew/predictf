@@ -44,7 +44,7 @@ print('R^2 score:', r2)
 
 # Get input from user
 item_name =st.selectbox(
-    red[select item name],
+    red['select item name'],
     ('vada', 'samoosa', 'cream bun','pazhampori','bajji'))
 day = st.selectbox(
     'select day',
