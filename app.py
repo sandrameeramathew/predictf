@@ -2,6 +2,16 @@ import streamlit as st
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
+st.markdown(
+   f”””
+   <style>
+   p {
+   background-image: url(‘frs.jpg’);
+   }
+   </style>
+   ”””,
+   unsafe_allow_html=True)
+
 
 # Load the sales data
 sales_df = pd.read_csv('sales_data.csv')
