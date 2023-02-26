@@ -5,7 +5,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 page_bg_img='''
 <style>
 body{
-background-image: url(‘frs.jpg’);
+background-image: url('https://www.google.com/imgres?imgurl=https%3A%2F%2Fwww.gloriafood.com%2Fwp-content%2Fuploads%2F2019%2F02%2Fforecasting-restaurant-sales.png&imgrefurl=https%3A%2F%2Fwww.gloriafood.com%2Fforecasting-restaurant-sales&tbnid=Yd8vdnsJDNQ4dM&vet=12ahUKEwjAusqy77L9AhWs7zgGHRIGBVkQMygXegQIARBr..i&docid=MKw4TZG-FciNlM&w=870&h=380&q=canteen%20sales%20prediction%20website%20images&ved=2ahUKEwjAusqy77L9AhWs7zgGHRIGBVkQMygXegQIARBr’);
 baground-size:cover;
 }
 </style>
