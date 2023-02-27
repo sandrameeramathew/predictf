@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
+import matplotlib.pyplot as plt
 import base64
 def add_bg_from_local(image_file):
     with open(image_file, "rb") as image_file:
@@ -66,6 +67,8 @@ X_new = X_new[X.columns]
 y_new = model.predict(X_new)
 if st.button('Predict'):
     st.write('Predicted sales: ', y_new[0])
+    fig1=plt.scatter(y,y_pred)
+    st.pyplot(fig1)
 
 
 
