@@ -67,8 +67,6 @@ X_new = X_new[X.columns]
 y_new = model.predict(X_new)
 if st.button('Predict'):
     st.write('Predicted sales: ', y_new[0])
-    fig1=plt.scatter(y,y_pred)
-    st.pyplot(fig1)
-
+    
 
 
