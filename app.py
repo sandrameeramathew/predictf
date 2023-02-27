@@ -68,5 +68,7 @@ y_new = model.predict(X_new)
 if st.button('Predict'):
     st.write('Predicted sales: ', y_new[0])
     
+    st.map(column=['y_test','y_pred)
+    
 
 
