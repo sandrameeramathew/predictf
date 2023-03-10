@@ -36,6 +36,24 @@ def add_bg_from_local(image_file):
     )
 add_bg_from_local('sales.jpg')  
 
+import os
+import pandas as pd
+
+import numpy as np
+import matplotlib.pyplot as plt
+from xgboost import XGBRegressor
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.tree import DecisionTreeRegressor
+from xgboost import XGBRegressor
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, LSTM
+from tensorflow.keras.callbacks import EarlyStopping,ModelCheckpoint
+import matplotlib.pyplot as plt
+
+
 store_sales=pd.read_csv("train.csv")
 store_sales= store_sales.drop(['store', 'item'], axis=1)
 store_sales['date'] = pd.to_datetime(store_sales['date'])
