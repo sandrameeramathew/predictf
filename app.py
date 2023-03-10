@@ -80,48 +80,18 @@ lr_mae= mean_absolute_error(predict_df['Linear Prediction'], monthly_sales['sale
 
 lr_r2 =r2_score (predict_df['Linear Prediction'], monthly_sales['sales'][-12:])
 
-import streamlit as st
+st.set_page_config(page_title="Customer Sales Forecast", layout="wide")
 
-def run_the_app():
-    st.title("Sales Prediction App")
+# Create a header for the app
+st.write("# Customer Sales Forecast")
 
-    st.write("Enter the number of months for which you want to predict sales:")
-
-    num_months = st.slider("Number of months", 1, 12, 1)
-
-    st.write(f"You have selected {num_months} months")
-
-    # Train the model with all available data
-   
-
-    # Make predictions for the selected number of months
-    pred_months = monthly_sales['date'].max().to_period('M').asfreq('M', offset='M').shift(1, freq='M')
-    pred_data = pd.DataFrame(columns=['sales_diff'])
-    for i in range(num_months):
-        pred_data.loc[i] = pred_data['sales_diff'].iloc[i-1] + model.predict(pred_data.iloc[i-1:i])[0]
-
-    # Add predictions to the existing data and plot the results
-    pred_sales = monthly_sales[['date', 'sales']].copy()
-    pred_sales = pred_sales.append(pd.DataFrame({'date': pred_months.to_timestamp(),
-                                                  'sales': scaler.inverse_transform(pred_data.cumsum())[-num_months:].ravel()}))
-    pred_sales['date'] = pd.to_datetime(pred_sales['date'])
-    pred_sales['month'] = pred_sales['date'].dt.strftime('%b-%y')
-
-    plt.figure(figsize=(15, 5))
-    plt.plot(pred_sales['date'], pred_sales['sales'])
-    plt.title(f"Sales prediction for next {num_months} months")
-    plt.xlabel("Month")
-    plt.ylabel("Sales")
-    plt.xticks(rotation=45)
-    plt.show()
-
-    st.write("Here are the predicted sales for the selected number of months:")
-    st.dataframe(pred_sales.tail(num_months).set_index('month'))
-
-if __name__ == '__main__':
-    run_the_app()
-
-    
-    
-
+# Create a plot of actual and predicted sales
+fig, ax = plt.subplots(figsize=(15,5))
+ax.plot(monthly_sales['date'], monthly_sales['sales'], label="Actual Sales")
+ax.plot(predict_df['date'], predict_df['Linear Prediction'], label="Predicted Sales")
+ax.set_title("Customer Sales Forecast using LR Model")
+ax.set_xlabel("Date")
+ax.set_ylabel("Sales")
+ax.legend()
+st.pyplot(fig)
 
