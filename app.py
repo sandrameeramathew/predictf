@@ -80,29 +80,47 @@ lr_mae= mean_absolute_error(predict_df['Linear Prediction'], monthly_sales['sale
 
 lr_r2 =r2_score (predict_df['Linear Prediction'], monthly_sales['sales'][-12:])
 
+import streamlit as st
 
-# Get input from user
-date =st.selectbox(
-     'select datename',
-    ('1/2/2019', 'samoosa', 'cream bun','pazhampori','bajji'))
+def run_the_app():
+    st.title("Sales Prediction App")
 
-# Create new input
-X_new = pd.DataFrame('date': [date])
-X_new = pd.get_dummies(X_new, columns=['date'], prefix=['date'])
+    st.write("Enter the number of months for which you want to predict sales:")
 
-# Add missing dummy variables
-missing_cols = set(X.columns) - set(X_new.columns)
-for col in missing_cols:
-    X_new[col] = 0
+    num_months = st.slider("Number of months", 1, 12, 1)
 
-# Ensure columns are in the same order
-X_new = X_new[X.columns]
+    st.write(f"You have selected {num_months} months")
 
-# Predict the sales for the new input
-y_new = lr_model.predict(X_new)
-if st.button('Predict'):
-    st.write('Predicted sales: ', y_new[0])
+    # Train the model with all available data
    
+
+    # Make predictions for the selected number of months
+    pred_months = monthly_sales['date'].max().to_period('M').asfreq('M', offset='M').shift(1, freq='M')
+    pred_data = pd.DataFrame(columns=['sales_diff'])
+    for i in range(num_months):
+        pred_data.loc[i] = pred_data['sales_diff'].iloc[i-1] + model.predict(pred_data.iloc[i-1:i])[0]
+
+    # Add predictions to the existing data and plot the results
+    pred_sales = monthly_sales[['date', 'sales']].copy()
+    pred_sales = pred_sales.append(pd.DataFrame({'date': pred_months.to_timestamp(),
+                                                  'sales': scaler.inverse_transform(pred_data.cumsum())[-num_months:].ravel()}))
+    pred_sales['date'] = pd.to_datetime(pred_sales['date'])
+    pred_sales['month'] = pred_sales['date'].dt.strftime('%b-%y')
+
+    plt.figure(figsize=(15, 5))
+    plt.plot(pred_sales['date'], pred_sales['sales'])
+    plt.title(f"Sales prediction for next {num_months} months")
+    plt.xlabel("Month")
+    plt.ylabel("Sales")
+    plt.xticks(rotation=45)
+    plt.show()
+
+    st.write("Here are the predicted sales for the selected number of months:")
+    st.dataframe(pred_sales.tail(num_months).set_index('month'))
+
+if __name__ == '__main__':
+    run_the_app()
+
     
     
 
