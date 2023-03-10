@@ -8,16 +8,12 @@ import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.tree import DecisionTreeRegressor
 
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
-from 
+
 import streamlit as st
-import pandas as pd
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score
-import matplotlib.pyplot as plt
+
 import base64
 def add_bg_from_local(image_file):
     with open(image_file, "rb") as image_file:
