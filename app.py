@@ -131,13 +131,3 @@ st.write(f"R2: {r2:.2f}")
 
 joblib.dump(lr_model, 'model.joblib')
 
-
-  # Inverse transform the data to get actual sales
-  predict_df[['Sales Prediction']] = scaler.inverse_transform(predict_df[['Sales Prediction']])
-  predict_df = predict_df[:-1] # drop the last row
-  
-  # Format the prediction dataframe
-  predict_df['date'] = predict_df['date'].astype(str)
-  predict_df = predict_df.set_index('date')
-
-  return predict_df
