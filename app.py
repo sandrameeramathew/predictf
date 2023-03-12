@@ -23,13 +23,11 @@ monthly_sales = monthly_sales.dropna()
 supervised_data = monthly_sales.drop(['date', 'sales'], axis=1)
 monthly_sales.info()
 # Define a function to make predictions
-def make_predictions(month1, month2, month3, month4, month5, month6, month7, month8, month9, month10, month11, month12):
-  # Add the user input to the data
-  new_row = pd.DataFrame({'month1': [month1], 'month2': [month2], 'month3': [month3], 'month4': [month4],
-                          'month5': [month5], 'month6': [month6], 'month7': [month7], 'month8': [month8],
-                          'month9': [month9], 'month10': [month10], 'month11': [month11], 'month12': [month12]})
-  supervised_data = pd.concat([supervised_data, new_row], axis=0).reset_index(drop=True)
 
+def make_predictions(data):
+  # Add the user input to the data
+  new_row = pd.DataFrame(data, columns=supervised_data.columns)
+  supervised_data_ext = pd.concat([supervised_data, new_row], axis=0).reset_index(drop=True)
 
 
   # Create the supervised data
