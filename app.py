@@ -131,5 +131,13 @@ st.write(f"R2: {r2:.2f}")
 
 st.write("## Predicted Sales Data")
 st.write(predict_df[['date', 'sales', 'Linear Prediction']])
+from datetime import datetime
 
+# Create a sidebar with a date input widget
+start_date = st.sidebar.date_input('Start date', value=datetime(2017, 1, 1))
+end_date = st.sidebar.date_input('End date', value=datetime(2017, 12, 1))
+
+# Convert the start and end dates to Pandas datetime format
+start_date = pd.to_datetime(start_date)
+end_date = pd.to_datetime(end_date)
 
