@@ -3,6 +3,7 @@ import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import joblib
 
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
@@ -131,13 +132,27 @@ st.write(f"R2: {r2:.2f}")
 
 st.write("## Predicted Sales Data")
 st.write(predict_df[['date', 'sales', 'Linear Prediction']])
-from datetime import datetime
 
-# Create a sidebar with a date input widget
-start_date = st.sidebar.date_input('Start date', value=datetime(2017, 1, 1))
-end_date = st.sidebar.date_input('End date', value=datetime(2017, 12, 1))
+joblib.dump(lr_model, 'trained_model.joblib')
 
-# Convert the start and end dates to Pandas datetime format
-start_date = pd.to_datetime(start_date)
-end_date = pd.to_datetime(end_date)
+# Define a function to predict sales
+def predict_sales(start_date, end_date):
+    # Create a range of dates between the start date and end date
+    dates = pd.date_range(start=start_date, end=end_date, freq='D')
+    # Create a DataFrame with the dates as the index
+    df = pd.DataFrame({'Date': dates})
+    # Use the trained model to predict sales
+    df['Predicted Sales'] = trained_model.predict(df.index.values.reshape(-1, 1))
+    # Return the predicted sales DataFrame
+    return df
+
+# Define the Streamlit app
+st.title('Sales Prediction App')
+start_date = st.date_input('Start Date')
+end_date = st.date_input('End Date')
+if start_date < end_date:
+    sales_df = predict_sales(start_date, end_date)
+    st.line_chart(sales_df.set_index('Date'))
+else:
+    st.error('Error: End date must be after start date.')
 
