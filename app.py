@@ -141,47 +141,62 @@ import joblib
 
 # Load the trained model
 trained_model = joblib.load('model.joblib')
-import streamlit as st
-from datetime import datetime
+# Define a function to make predictions
+def make_predictions(input_date):
+  # Convert input date to month format
+  input_date = pd.to_datetime(input_date)
+  input_month = input_date.to_period("M")
 
-# Create text input widgets for each month
-month1 = st.text_input('Month 1', value='')
-month2 = st.text_input('Month 2', value='')
-month3 = st.text_input('Month 3', value='')
-month4 = st.text_input('Month 4', value='')
-month5 = st.text_input('Month 5', value='')
-month6 = st.text_input('Month 6', value='')
-month7 = st.text_input('Month 7', value='')
-month8 = st.text_input('Month 8', value='')
-month9 = st.text_input('Month 9', value='')
-month10 = st.text_input('Month 10', value='')
-month11 = st.text_input('Month 11', value='')
-month12 = st.text_input('Month 12', value='')
+  # Add the user input to the data
+  new_row = pd.DataFrame({'date': [input_month], 'sales': [np.nan]})
+  monthly_sales_extended = pd.concat([monthly_sales, new_row], axis=0).reset_index(drop=True)
+  
+  # Create the supervised data
+  supervised_data_extended = monthly_sales_extended.drop(['sales'], axis=1)
+  for i in range(1, 13):
+    col_name = 'month' + str(i)
+    supervised_data_extended[col_name] = supervised_data_extended['sales_diff'].shift(i)
+  supervised_data_extended = supervised_data_extended.dropna().reset_index(drop=True)
 
-# Create a button to make predictions
-if st.button('Make Predictions'):
-    # Convert user input to float and make predictions
-    try:
-        month1_val = float(month1)
-        month2_val = float(month2)
-        month3_val = float(month3)
-        month4_val = float(month4)
-        month5_val = float(month5)
-        month6_val = float(month6)
-        month7_val = float(month7)
-        month8_val = float(month8)
-        month9_val = float(month9)
-        month10_val = float(month10)
-        month11_val = float(month11)
-        month12_val = float(month12)
-        
-        make_predictions(month1_val, month2_val, month3_val, month4_val, month5_val,
-                          month6_val, month7_val, month8_val, month9_val, month10_val,
-                          month11_val, month12_val)
-        
-        # Display the predicted sales data
-        st.write("## Predicted Sales Data")
-        st.write(predict_df)
-        
-    except ValueError:
-        st.write("Please enter valid numbers for all months.")
+  # Split the data into train and test sets
+  split_date = pd.to_datetime('2015-01-01')
+  train_data = supervised_data_extended.loc[supervised_data_extended['date'] < split_date]
+  test_data = supervised_data_extended.loc[supervised_data_extended['date'] >= split_date].iloc[:12,:]
+
+  # Scale the data
+  scaler = MinMaxScaler(feature_range=(-1, 1)) 
+  scaler.fit(train_data)
+  train_data = scaler.transform(train_data)
+  test_data = scaler.transform(test_data)
+
+  # Split the data into features and target
+  x_train, y_train = train_data[:, 1:], train_data[:, 0:1] 
+  x_test = test_data[:, 1:]
+
+  # Get the dates for the test set
+  sales_dates = monthly_sales_extended['date'][-12:].reset_index(drop=True)
+  predict_df = pd.DataFrame(sales_dates)
+
+  # Make predictions using the trained model
+  model = joblib.load("sales_prediction_model.pkl")
+  predictions = model.predict(x_test)
+  predictions = predictions.reshape(-1, 1)
+  predictions = np.concatenate([predictions, x_test], axis=1) 
+  predictions = scaler.inverse_transform(predictions)
+
+  # Calculate the predicted sales
+  result_list = []
+  for index in range(0, len(predictions)):
+    result_list.append(predictions[index][0] + monthly_sales_extended['sales'].iloc[-13+index])
+  predictions_series = pd.Series(result_list, name="Sales Prediction")
+  predict_df = predict_df.merge(predictions_series, left_index=True, right_index=True)
+
+  # Inverse transform the data to get actual sales
+  predict_df[['Sales Prediction']] = scaler.inverse_transform(predict_df[['Sales Prediction']])
+  predict_df = predict_df[:-1] # drop the last row
+  
+  # Format the prediction dataframe
+  predict_df['date'] = predict_df['date'].astype(str)
+  predict_df = predict_df.set_index('date')
+
+  return predict_df
