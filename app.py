@@ -133,26 +133,35 @@ st.write(f"R2: {r2:.2f}")
 st.write("## Predicted Sales Data")
 st.write(predict_df[['date', 'sales', 'Linear Prediction']])
 
-joblib.dump(lr_model, 'trained_model.joblib')
+joblib.dump(lr_model, 'model.joblib')
 
-# Define a function to predict sales
+import streamlit as st
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+import joblib
+
+# Load the trained model
+trained_model = joblib.load('model.joblib')
+
 def predict_sales(start_date, end_date):
-    # Create a range of dates between the start date and end date
+    # Generate dates between start_date and end_date
     dates = pd.date_range(start=start_date, end=end_date, freq='D')
-    # Create a DataFrame with the dates as the index
-    df = pd.DataFrame({'Date': dates})
-    # Use the trained model to predict sales
-    df['Predicted Sales'] = trained_model.predict(df.index.values.reshape(-1, 1))
-    # Return the predicted sales DataFrame
+    # Create an empty dataframe with the dates as index
+    df = pd.DataFrame(index=dates)
+    # Add a column of zeros to the dataframe
+    df['Predicted Sales'] = 0
+    # Use the trained model to predict sales for each date
+    for date in dates:
+        df.loc[date, 'Predicted Sales'] = trained_model.predict([[date.timestamp()]])
     return df
 
-# Define the Streamlit app
-st.title('Sales Prediction App')
-start_date = st.date_input('Start Date')
-end_date = st.date_input('End Date')
+# Set up the Streamlit app
+st.title('Sales Predictor')
+start_date = st.date_input('Start date')
+end_date = st.date_input('End date')
 if start_date < end_date:
     sales_df = predict_sales(start_date, end_date)
-    st.line_chart(sales_df.set_index('Date'))
+    st.line_chart(sales_df)
 else:
     st.error('Error: End date must be after start date.')
 
