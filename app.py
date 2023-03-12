@@ -86,7 +86,7 @@ predict_df = predict_df.merge(lr_pre_series, left_index=True, right_index=True)
 ##Inverse transform the data to get actual sales
 predict_df = predict_df[:-1] # drop the last row
 
-split_date = pd.to_datetime('2019-01-01')
+split_date = pd.to_datetime('2015-01-01')
 
 scaler.fit(monthly_sales.loc[monthly_sales['date'] < split_date][['sales']])
 predict_df[['Linear Prediction']] = scaler.inverse_transform(predict_df[['Linear Prediction']])
