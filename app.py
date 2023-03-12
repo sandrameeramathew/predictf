@@ -114,6 +114,7 @@ ax.set_title("Customer Sales Forecast using LR Model")
 ax.set_xlabel("Date")
 ax.set_ylabel("Sales")
 ax.legend()
+st.pyplot(fig)
 
 #Display the evaluation metrics
 st.write("## Evaluation Metrics")
