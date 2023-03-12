@@ -40,7 +40,7 @@ supervised_data = supervised_data.dropna().reset_index(drop=True)
 
   # Split the data into train and test sets
 train_data = supervised_data[:-12]
-test_data = supervised_data[-12:]
+test_data = supervised_data[-24:]
 
   # Scale the data
 scaler = MinMaxScaler(feature_range=(-1, 1)) 
