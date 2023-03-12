@@ -23,12 +23,7 @@ monthly_sales = monthly_sales.dropna()
 supervised_data = monthly_sales.drop(['date', 'sales'], axis=1)
 monthly_sales.info()
 # Define a function to make predictions
-import datetime
 
-
-data = st.date_input(
-    "select a date",
-    datetime.date(2019, 7, 6))
 
 
 def make_predictions(data):
