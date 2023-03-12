@@ -127,69 +127,10 @@ st.write(f"MSE: {mse:.2f}")
 st.write(f"MAE: {mae:.2f}")
 st.write(f"R2: {r2:.2f}")
 
-#Display the predicted sales data
 
-st.write("## Predicted Sales Data")
-st.write(predict_df[['date', 'sales', 'Linear Prediction']])
 
 joblib.dump(lr_model, 'model.joblib')
 
-import streamlit as st
-import pandas as pd
-from sklearn.linear_model import LinearRegression
-import joblib
-
-# Load the trained model
-trained_model = joblib.load('model.joblib')
-# Define a function to make predictions
-def make_predictions(input_date):
-  # Convert input date to month format
-  st.input_date = pd.to_datetime(input_date)
-  input_month = input_date.to_period("M")
-
-  # Add the user input to the data
-  new_row = pd.DataFrame({'date': [input_month], 'sales': [np.nan]})
-  monthly_sales_extended = pd.concat([monthly_sales, new_row], axis=0).reset_index(drop=True)
-  
-  # Create the supervised data
-  supervised_data_extended = monthly_sales_extended.drop(['sales'], axis=1)
-  for i in range(1, 13):
-    col_name = 'month' + str(i)
-    supervised_data_extended[col_name] = supervised_data_extended['sales_diff'].shift(i)
-  supervised_data_extended = supervised_data_extended.dropna().reset_index(drop=True)
-
-  # Split the data into train and test sets
-  split_date = pd.to_datetime('2015-01-01')
-  train_data = supervised_data_extended.loc[supervised_data_extended['date'] < split_date]
-  test_data = supervised_data_extended.loc[supervised_data_extended['date'] >= split_date].iloc[:12,:]
-
-  # Scale the data
-  scaler = MinMaxScaler(feature_range=(-1, 1)) 
-  scaler.fit(train_data)
-  train_data = scaler.transform(train_data)
-  test_data = scaler.transform(test_data)
-
-  # Split the data into features and target
-  x_train, y_train = train_data[:, 1:], train_data[:, 0:1] 
-  x_test = test_data[:, 1:]
-
-  # Get the dates for the test set
-  sales_dates = monthly_sales_extended['date'][-12:].reset_index(drop=True)
-  predict_df = pd.DataFrame(sales_dates)
-
-  # Make predictions using the trained model
-  model = joblib.load("sales_prediction_model.pkl")
-  predictions = model.predict(x_test)
-  predictions = predictions.reshape(-1, 1)
-  predictions = np.concatenate([predictions, x_test], axis=1) 
-  predictions = scaler.inverse_transform(predictions)
-
-  # Calculate the predicted sales
-  result_list = []
-  for index in range(0, len(predictions)):
-    result_list.append(predictions[index][0] + monthly_sales_extended['sales'].iloc[-13+index])
-  predictions_series = pd.Series(result_list, name="Sales Prediction")
-  predict_df = predict_df.merge(predictions_series, left_index=True, right_index=True)
 
   # Inverse transform the data to get actual sales
   predict_df[['Sales Prediction']] = scaler.inverse_transform(predict_df[['Sales Prediction']])
