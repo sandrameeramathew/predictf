@@ -141,25 +141,47 @@ import joblib
 
 # Load the trained model
 trained_model = joblib.load('model.joblib')
+import streamlit as st
+from datetime import datetime
 
-def predict_sales(start_date, end_date):
-    # Generate dates between start_date and end_date
-    dates = pd.date_range(start=start_date, end=end_date, freq='D')
-    # Create an empty dataframe with the dates as index
-    df = pd.DataFrame(index=dates)
-    # Add a column of zeros to the dataframe
-    df['Predicted Sales'] = 0
-    # Use the trained model to predict sales for each date
-    for date in dates:
-        df.loc[date, 'Predicted Sales'] = trained_model.predict([[date.timestamp()]])
-    return df
+# Create text input widgets for each month
+month1 = st.text_input('Month 1', value='')
+month2 = st.text_input('Month 2', value='')
+month3 = st.text_input('Month 3', value='')
+month4 = st.text_input('Month 4', value='')
+month5 = st.text_input('Month 5', value='')
+month6 = st.text_input('Month 6', value='')
+month7 = st.text_input('Month 7', value='')
+month8 = st.text_input('Month 8', value='')
+month9 = st.text_input('Month 9', value='')
+month10 = st.text_input('Month 10', value='')
+month11 = st.text_input('Month 11', value='')
+month12 = st.text_input('Month 12', value='')
 
-# Set up the Streamlit app
-st.title('Sales Predictor')
-start_date = st.date_input('Start date')
-end_date = st.date_input('End date')
-if start_date < end_date:
-    sales_df = predict_sales(start_date, end_date)
-    st.line_chart(sales_df)
-else:
-    st.error('Error: End date must be after start date.')
+# Create a button to make predictions
+if st.button('Make Predictions'):
+    # Convert user input to float and make predictions
+    try:
+        month1_val = float(month1)
+        month2_val = float(month2)
+        month3_val = float(month3)
+        month4_val = float(month4)
+        month5_val = float(month5)
+        month6_val = float(month6)
+        month7_val = float(month7)
+        month8_val = float(month8)
+        month9_val = float(month9)
+        month10_val = float(month10)
+        month11_val = float(month11)
+        month12_val = float(month12)
+        
+        make_predictions(month1_val, month2_val, month3_val, month4_val, month5_val,
+                          month6_val, month7_val, month8_val, month9_val, month10_val,
+                          month11_val, month12_val)
+        
+        # Display the predicted sales data
+        st.write("## Predicted Sales Data")
+        st.write(predict_df)
+        
+    except ValueError:
+        st.write("Please enter valid numbers for all months.")
