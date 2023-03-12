@@ -59,6 +59,11 @@ sales_dates = monthly_sales['date'][-12:].reset_index(drop=True)
 predict_df = pd.DataFrame(sales_dates)
 act_sales= monthly_sales['sales'][-13:].to_list()
 
+import streamlit as st
+from datetime import datetime
+
+
+
   # Make predictions using a linear regression model
 lr_model = LinearRegression()
 lr_model.fit(x_train, y_train) 
@@ -80,7 +85,7 @@ predict_df = predict_df.merge(lr_pre_series, left_index=True, right_index=True)
 ##Inverse transform the data to get actual sales
 predict_df = predict_df[:-1] # drop the last row
 
-split_date = pd.to_datetime('2016-01-01')
+split_date = pd.to_datetime('2019-01-01')
 
 scaler.fit(monthly_sales.loc[monthly_sales['date'] < split_date][['sales']])
 predict_df[['Linear Prediction']] = scaler.inverse_transform(predict_df[['Linear Prediction']])
