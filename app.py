@@ -144,7 +144,7 @@ trained_model = joblib.load('model.joblib')
 # Define a function to make predictions
 def make_predictions(input_date):
   # Convert input date to month format
-  input_date = pd.to_datetime(input_date)
+  st.input_date = pd.to_datetime(input_date)
   input_month = input_date.to_period("M")
 
   # Add the user input to the data
